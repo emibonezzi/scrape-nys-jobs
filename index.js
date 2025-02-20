@@ -59,6 +59,18 @@ exports.handler = async () => {
 
   if (vacanciesIds.length === dbLength) return console.log("No new entries");
 
+  // add to db
+  for (let vacancy of vacanciesIds) {
+    console.log("Saving vacancy", vacancy);
+    const newVacancy = new Vacancy({
+      vacancyId: vacancy,
+      active: true,
+    });
+    await newVacancy.save();
+  }
+
+  await browser.close();
+
   // save ids in db
 };
 
