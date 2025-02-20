@@ -61,6 +61,8 @@ exports.handler = async () => {
 
   // add to db
   for (let vacancy of vacanciesIds) {
+    const vacancyLookup = await Vacancy.findOne({ vacancyId: vacancy });
+    if (vacancyLookup) continue; // if found in db, skip
     console.log("Saving vacancy", vacancy);
     const newVacancy = new Vacancy({
       vacancyId: vacancy,
@@ -70,8 +72,6 @@ exports.handler = async () => {
   }
 
   await browser.close();
-
-  // save ids in db
 };
 
 exports.handler();
