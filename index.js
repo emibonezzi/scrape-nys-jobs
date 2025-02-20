@@ -1,8 +1,11 @@
 const puppeteer = require("puppeteer");
+const mongoose = require("mongoose");
+const Vacancy = require("./schemas/vacancySchema");
+require("dotenv").config();
 
 exports.handler = async () => {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     defaultViewport: null,
   });
 
@@ -13,6 +16,8 @@ exports.handler = async () => {
   // expand page length to 100 results
   await page.select("select#dt-length-0", "100");
   let vacanciesIds = [];
+
+  // start scraping
   while (true) {
     // Extract page vacancies ids in array
     let pageVacancies = await page.$$eval(
@@ -37,11 +42,24 @@ exports.handler = async () => {
     // click next button
     await nextButton.click();
 
-    // wait for table update
+    // wait until page is loaded
     await page.waitForNetworkIdle();
   }
 
-  console.log(vacanciesIds.length);
+  // connect to db
+  await mongoose.connect(
+    `mongodb+srv://admin:${process.env.MONGO_DB_PASS}@statejobsny.ghdod.mongodb.net/?retryWrites=true&w=majority&appName=StateJobsNY`
+  );
+
+  // check if new changes by checking lengths
+  const dbLength = await Vacancy.countDocuments({});
+
+  console.log("Total number of vacancies after check:", vacanciesIds.length);
+  console.log("Total number of vacancies in db:", dbLength);
+
+  if (vacanciesIds.length === dbLength) return console.log("No new entries");
+
+  // save ids in db
 };
 
 exports.handler();

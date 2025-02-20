@@ -10,6 +10,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "dotenv": "^16.4.7",
+    "mongoose": "^8.10.1",
     "puppeteer": "^24.2.1"
   }
 }
