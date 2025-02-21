@@ -97,8 +97,7 @@ exports.handler = async () => {
       await page.goto(`${BASE_VACANCY_URL}${vacancy.vacancy_id}`);
       // wait for the information panel to load
       await page.waitForSelector(".ui-tabs");
-      // get all tabs
-
+      // get all vacancy details in array
       const vacancyDetails = await page.$$eval(".ui-tabs-panel", (tabs) =>
         tabs.map((tab) =>
           Array.from(tab.querySelectorAll(".row")).map((row) => [
@@ -109,18 +108,20 @@ exports.handler = async () => {
                   .split(" ")
                   .join("_")
                   .toLowerCase()
-              : "street_2",
+              : "street_2", // for 2 line addresses
             row.querySelector(".rightCol").innerText.trim(),
           ])
         )
       );
 
+      // add props to the vacancy
       vacancyDetails.map((tab) =>
         tab.map((prop) => {
           vacancy[prop[0]] = prop[1];
         })
       );
 
+      // save vacancy in db
       const newVacancy = new Vacancy(vacancy);
       await newVacancy.save();
       console.log(`Vacancy ${vacancy.vacancy_id} saved.`);
