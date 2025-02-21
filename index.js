@@ -57,7 +57,7 @@ exports.handler = async () => {
     mongoose.set("debug", true);
 
     // get all db entries
-    const dbEntries = await Vacancy.find({});
+    const dbEntries = await Vacancy.find({ active: true });
 
     // check dbEntries and deactivate entry not found in vacanciesIds
     for (let entry of dbEntries) {
