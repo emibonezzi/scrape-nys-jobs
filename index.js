@@ -1,6 +1,7 @@
 const puppeteer = require("puppeteer-core");
 const chromium = require("@sparticuz/chromium");
 const Vacancy = require("./schemas/vacancySchema");
+const mongoose = require("mongoose");
 require("dotenv").config();
 
 const HOME_URL = "https://statejobs.ny.gov/public/vacancyTable.cfm";
