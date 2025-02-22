@@ -1,5 +1,5 @@
-const puppeteer = require("puppeteer");
-const mongoose = require("mongoose");
+const puppeteer = require("puppeteer-core");
+const chromium = require("@sparticuz/chromium");
 const Vacancy = require("./schemas/vacancySchema");
 require("dotenv").config();
 
@@ -9,6 +9,9 @@ const BASE_VACANCY_URL =
 
 exports.handler = async () => {
   const browser = await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
     headless: true,
   });
 
@@ -71,8 +74,10 @@ exports.handler = async () => {
     // get all db entries
     const dbEntries = await Vacancy.find({ active: true });
 
+    console.log("Deactivating inactive listings...");
+
     // check dbEntries and deactivate entry not found in vacanciesIds
-    /* for (let entry of dbEntries) {
+    for (let entry of dbEntries) {
       if (
         !vacanciesIds
           .map((vacancy) => vacancy.vacancy_id)
@@ -87,10 +92,11 @@ exports.handler = async () => {
       }
     }
 
-    console.log("Db check vs scraped finished"); */
+    console.log("Deactivation check finished.");
+    console.log("Checking new listings...");
 
     // check scraped vacancies in db and add if not found
-    for (let vacancy of vacanciesIds.slice(0, 5)) {
+    for (let vacancy of vacanciesIds) {
       if (dbEntries.map((v) => v.vacancy_id).includes(vacancy.vacancy_id))
         continue;
       // go to vacancy page detail
@@ -126,7 +132,7 @@ exports.handler = async () => {
       await newVacancy.save();
       console.log(`Vacancy ${vacancy.vacancy_id} saved.`);
     }
-    console.log("Scrape check vs db finished");
+    console.log("New listing check finished.");
   } catch (error) {
     console.log(error.message);
   } finally {
@@ -135,4 +141,4 @@ exports.handler = async () => {
   }
 };
 
-exports.handler();
+// exports.handler();

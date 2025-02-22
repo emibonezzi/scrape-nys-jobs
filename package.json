@@ -12,6 +12,8 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "mongoose": "^8.10.1",
-    "puppeteer": "^24.2.1"
+    "@sparticuz/chromium": "^123.0.1",
+    "puppeteer-core": "^22.6.4",
+    "serverless-http": "^3.2.0"
   }
 }
