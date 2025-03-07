@@ -1,18 +1,17 @@
-const puppeteer = require("puppeteer-core");
-const chromium = require("@sparticuz/chromium");
+const puppeteer = require("puppeteer");
 const Vacancy = require("./schemas/vacancySchema");
 const mongoose = require("mongoose");
+const cleanVacancy = require("./handlers/cleanVacancy");
 require("dotenv").config();
 
 const HOME_URL = "https://statejobs.ny.gov/public/vacancyTable.cfm";
 const BASE_VACANCY_URL =
   "https://statejobs.ny.gov/public/vacancyDetailsView.cfm?id=";
 
+/* const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // throttle api requests to OpenAI */
+
 exports.handler = async () => {
   const browser = await puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(),
     headless: true,
   });
 
@@ -124,14 +123,31 @@ exports.handler = async () => {
       // add props to the vacancy
       vacancyDetails.map((tab) =>
         tab.map((prop) => {
-          vacancy[prop[0]] = prop[1];
+          if (
+            prop[0] === "duties_description" ||
+            prop[0] === "minimum_qualifications" ||
+            prop[0] === "additional_comments"
+          ) {
+            vacancy[prop[0]] = prop[1].slice(0, 350);
+          } else {
+            vacancy[prop[0]] = prop[1];
+          }
         })
       );
 
-      // save vacancy in db
-      const newVacancy = new Vacancy(vacancy);
-      await newVacancy.save();
-      console.log(`Vacancy ${vacancy.vacancy_id} saved.`);
+      // clean vacancy with AI
+      try {
+        const vacancyCleaned = await cleanVacancy(vacancy);
+        // await delay(500); // wait 2 seconds
+        // save vacancy in db
+        const newVacancy = new Vacancy(vacancyCleaned);
+        await newVacancy.save();
+        console.log(`Vacancy ${vacancy.vacancy_id} saved.`);
+      } catch (error) {
+        console.log("Failed to save vacancy", vacancy.vacancy_id);
+        console.log("Error:", error.message);
+        continue;
+      }
     }
     console.log("New listing check finished.");
   } catch (error) {
@@ -142,4 +158,4 @@ exports.handler = async () => {
   }
 };
 
-// exports.handler();
+exports.handler();
