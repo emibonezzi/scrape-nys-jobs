@@ -1,4 +1,5 @@
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
+const chromium = require("@sparticuz/chromium");
 const Vacancy = require("./schemas/vacancySchema");
 const mongoose = require("mongoose");
 const cleanVacancy = require("./handlers/cleanVacancy");
@@ -12,6 +13,9 @@ const BASE_VACANCY_URL =
 
 exports.handler = async () => {
   const browser = await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
     headless: true,
   });
 
