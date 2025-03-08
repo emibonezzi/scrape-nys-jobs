@@ -10,7 +10,14 @@ const input = `You will be given an object related to a NYS vacancy. This item m
     workExperienceRequirements: string // Analyze the minimum qualifications and return one of these values: ["Not mentioned", "1-3", "5+"]
     keywords: [string] // Analyze the job description and return 3 to 5 keywords
     positionSummary: string // Analyze the duties description and additional comments fields and generate a short summary of the position
-    salaryRange: string // Analyze the salary range and return one value from this array: ["Not Mentioned", "<$60,000", "$60,000 - $100,000", "$100,000 - $150,000", "$150,000 - $200,000", "$200,000+"]
+    salaryRange: return only ONE valid salary range from these ones
+
+    <$60,000 
+    $60,000 - $100,000, 
+    $100,000 - $150,000,
+    $150,000 - $200,000,
+    $200,000+
+    
   }
    Output only the JSON, without any additional text or explanations.`;
 
