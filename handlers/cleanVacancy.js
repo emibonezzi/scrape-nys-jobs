@@ -1,12 +1,17 @@
 const axios = require("axios");
 
-const input = `you will be given one input and you have to return only ONE valid salary range from these ones: 
+const input = `you will be given one input and you have to return only ONE valid NY regions from ONLY these ones: 
 
-<$60,000
-$60,000 - $100,000
-$100,000 - $150,000
-$150,000 - $200,000
-$200,000+
+Western New York
+Finger Lakes
+Southern Tier
+Central New York
+Mohawk Valley
+Capital District
+Hudson Valley
+New York City
+Long Island
+North Country
 
 Output your pick only without quotes.`;
 

@@ -9,12 +9,17 @@ const BASE_VACANCY_URL =
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // throttle api requests to OpenAI
 
-const salaries = [
-  "<$60,000",
-  "$60,000 - $100,000",
-  "$100,000 - $150,000",
-  "$150,000 - $200,000",
-  "$200,000+",
+const nyRegions = [
+  "Western New York",
+  "Finger Lakes",
+  "Southern Tier",
+  "Central New York",
+  "Mohawk Valley",
+  "Capital District",
+  "Hudson Valley",
+  "New York City",
+  "Long Island",
+  "North Country",
 ];
 
 exports.handler = async () => {
@@ -32,20 +37,18 @@ exports.handler = async () => {
       const vacancyToUpdate = await Vacancy.findOne({
         vacancy_id: entry.vacancy_id,
       });
-      if (!salaries.includes(vacancyToUpdate.salaryRange)) {
-        const salaryRangeCorrected = await cleanVacancy(
-          vacancyToUpdate.salary_range
-        );
+      if (!nyRegions.includes(vacancyToUpdate.nyRegion)) {
+        const nyRegionCorrected = await cleanVacancy(vacancyToUpdate.nyRegion);
 
-        vacancyToUpdate.salaryRange = salaryRangeCorrected;
-        await vacancyToUpdate.save();
         console.log(
           "Vacancy id",
           vacancyToUpdate.vacancy_id,
-          vacancyToUpdate.salary_range,
+          vacancyToUpdate.nyRegion,
           "corrected to",
-          salaryRangeCorrected
+          nyRegionCorrected
         );
+        vacancyToUpdate.nyRegion = nyRegionCorrected;
+        await vacancyToUpdate.save();
         await delay(500);
       }
     }
