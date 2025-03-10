@@ -1,6 +1,7 @@
 const axios = require("axios");
+const listOfInputs = require("../data/listOfInputs");
 
-const input = `You will be given an object related to a NYS vacancy. This item might contain contradictory elements, typos, and other errors. Your task is to return the JSON object with all fields cleaned of typos/ mistakes, and include the following additional fields:
+/* const input = `You will be given an object related to a NYS vacancy. This item might contain contradictory elements, typos, and other errors. Your task is to return the JSON object with all fields cleaned of typos/ mistakes, and include the following additional fields:
   { 
     macroArea: return one value only from this list:
     
@@ -53,32 +54,46 @@ const input = `You will be given an object related to a NYS vacancy. This item m
     $200,000+
     
   }
-   Output only the JSON, without any additional text or explanations.`;
+   Output only the JSON, without any additional text or explanations.`; */
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // throttle api requests to OpenAI */
 
 module.exports = async (vacancy) => {
-  const response = await axios.post(
-    "https://api.openai.com/v1/chat/completions",
-    {
-      model: "gpt-4o-mini",
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content: input,
-        },
-        {
-          role: "user",
-          content: JSON.stringify(vacancy),
-        },
-      ],
-      temperature: 0.7,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.OPEN_AI_KEY}`,
-      },
-    }
-  );
+  let extraFields = {};
 
-  return JSON.parse(response.data.choices[0].message.content);
+  for (let input of listOfInputs) {
+    // for every input send request
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: input.inputPrompt,
+          },
+          {
+            role: "user",
+            content: JSON.stringify(vacancy[input.fieldToCheck]),
+          },
+        ],
+        temperature: 0.7,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.OPEN_AI_KEY}`,
+        },
+      }
+    );
+    const content = response.data.choices[0].message.content;
+    extraFields[input.fieldName] = content;
+    /* console.log(
+      vacancy[input.fieldToCheck].slice(0, 20),
+      "was changed to",
+      content
+    ); */
+    await delay(500);
+  }
+
+  return extraFields;
 };

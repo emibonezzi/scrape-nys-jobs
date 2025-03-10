@@ -1,3 +1,4 @@
+/* const puppeteer = require("puppeteer"); */
 const puppeteer = require("puppeteer-core");
 const chromium = require("@sparticuz/chromium");
 const Vacancy = require("./schemas/vacancySchema");
@@ -127,24 +128,15 @@ exports.handler = async () => {
       // add props to the vacancy
       vacancyDetails.map((tab) =>
         tab.map((prop) => {
-          if (
-            prop[0] === "duties_description" ||
-            prop[0] === "minimum_qualifications" ||
-            prop[0] === "additional_comments"
-          ) {
-            vacancy[prop[0]] = prop[1].slice(0, 350);
-          } else {
-            vacancy[prop[0]] = prop[1];
-          }
+          vacancy[prop[0]] = prop[1];
         })
       );
 
       // clean vacancy with AI
       try {
-        const vacancyCleaned = await cleanVacancy(vacancy);
-        // await delay(500); // wait 2 seconds
+        const extraFields = await cleanVacancy(vacancy);
         // save vacancy in db
-        const newVacancy = new Vacancy(vacancyCleaned);
+        const newVacancy = new Vacancy({ ...vacancy, ...extraFields });
         await newVacancy.save();
         console.log(`Vacancy ${vacancy.vacancy_id} saved.`);
       } catch (error) {
