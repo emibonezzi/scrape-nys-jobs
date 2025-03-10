@@ -150,6 +150,10 @@ exports.handler = async () => {
       } catch (error) {
         console.log("Failed to save vacancy", vacancy.vacancy_id);
         console.log("Error:", error.message);
+        vacancy.cleanedWithAi = false;
+        const newVacancy = new Vacancy(vacancy);
+        await newVacancy.save();
+        console.log("Vacancy saved without cleaning it", vacancy.vacancy_id);
         continue;
       }
     }
