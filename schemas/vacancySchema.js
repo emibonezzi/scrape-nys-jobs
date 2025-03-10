@@ -11,6 +11,7 @@ const vacancySchema = new mongoose.Schema(
     county: String,
     active: Boolean,
     salaryRange: String,
+    workExperienceRequirements: String,
   },
   { strict: false }
 );

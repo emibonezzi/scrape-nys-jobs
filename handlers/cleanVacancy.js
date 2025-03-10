@@ -1,12 +1,10 @@
 const axios = require("axios");
 
-const input = `you will be given one input and you have to return only ONE valid salary range from these ones: 
+const input = `you will be given one input and you have to return valid years of experience from this list ONLY: 
 
-<$60,000
-$60,000 - $100,000
-$100,000 - $150,000
-$150,000 - $200,000
-$200,000+
+Not mentioned
+1-3
+5+
 
 Output your pick only without quotes.`;
 

@@ -9,13 +9,7 @@ const BASE_VACANCY_URL =
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // throttle api requests to OpenAI
 
-const salaries = [
-  "<$60,000",
-  "$60,000 - $100,000",
-  "$100,000 - $150,000",
-  "$150,000 - $200,000",
-  "$200,000+",
-];
+const YOE = ["Not mentioned", "1-3", "5+"];
 
 exports.handler = async () => {
   try {
@@ -32,20 +26,21 @@ exports.handler = async () => {
       const vacancyToUpdate = await Vacancy.findOne({
         vacancy_id: entry.vacancy_id,
       });
-      if (!salaries.includes(vacancyToUpdate.salaryRange)) {
-        const salaryRangeCorrected = await cleanVacancy(
-          vacancyToUpdate.salary_range
+      if (!YOE.includes(vacancyToUpdate.workExperienceRequirements)) {
+        const workExperienceRequirementsCorrected = await cleanVacancy(
+          vacancyToUpdate.minimum_qualifications
         );
-
-        vacancyToUpdate.salaryRange = salaryRangeCorrected;
-        await vacancyToUpdate.save();
         console.log(
           "Vacancy id",
           vacancyToUpdate.vacancy_id,
-          vacancyToUpdate.salary_range,
+          vacancyToUpdate.workExperienceRequirements,
           "corrected to",
-          salaryRangeCorrected
+          workExperienceRequirementsCorrected
         );
+        vacancyToUpdate.workExperienceRequirements =
+          workExperienceRequirementsCorrected;
+        await vacancyToUpdate.save();
+
         await delay(500);
       }
     }
