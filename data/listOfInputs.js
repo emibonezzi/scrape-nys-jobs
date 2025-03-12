@@ -1,12 +1,12 @@
 module.exports = [
   {
-    fieldToCheck: "city",
+    fieldToCheck: "county",
     inputPrompt:
       "You will be given a county in New York State. Return only one value from this list of macro areas: Long Island, New York City, Upstate. Output only the value with no quotes.",
     fieldName: "macroArea",
   },
   {
-    fieldToCheck: "city",
+    fieldToCheck: "county",
     inputPrompt:
       "You will be given a county in New York State. Return only one value from this list of New York Regions: Capital District, Western New York, New York City, Long Island, Central New York, Finger Lakes, North Country, Southern Tier, Hudson Valley, Mohawk Valley. Output only the value with no quotes.",
     fieldName: "nyRegion",
