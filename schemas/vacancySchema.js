@@ -9,7 +9,7 @@ const vacancySchema = new mongoose.Schema(
     deadline: String,
     department: String,
     county: String,
-    active: boolean,
+    active: Boolean,
     ny_help: String,
     agency: String,
     occupational_category: String,
