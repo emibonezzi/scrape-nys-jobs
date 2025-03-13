@@ -107,6 +107,16 @@ exports.handler = async () => {
           for (const prop of Object.keys(vacancy)) {
             if (vacancy[prop] !== entry[prop]) {
               // if something has changed, find and update vacancy in db
+              console.log(
+                "Updating",
+                vacancy.vacancy_id,
+                "Property: ",
+                prop,
+                "from",
+                entry[prop],
+                "to",
+                vacancy[prop]
+              );
               const vacancyToUpdate = await Vacancy.findOne({
                 vacancy_id: entry.vacancy_id,
               });
