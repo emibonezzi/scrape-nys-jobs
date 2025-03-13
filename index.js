@@ -98,12 +98,34 @@ exports.handler = async () => {
     }
 
     console.log("Deactivation check finished.");
+    console.log("Checking if existing vacancies has changes... ");
+    // check if vacancy have updates
+    for (const entry of dbEntries) {
+      for (const vacancy of vacanciesIds) {
+        if (vacancy.vacancy_id === entry.vacancy_id) {
+          // once matched the vacancy check prop by prop
+          for (const prop of Object.keys(vacancy)) {
+            if (vacancy[prop] !== entry[prop]) {
+              // if something has changed, find and update vacancy in db
+              const vacancyToUpdate = await Vacancy.findOne({
+                vacancy_id: entry.vacancy_id,
+              });
+              vacancyToUpdate[prop] = vacancy[prop];
+              await vacancyToUpdate.save();
+            }
+          }
+        }
+      }
+    }
+
+    console.log("Check for updates finished.");
     console.log("Checking new listings...");
 
     // check scraped vacancies in db and add if not found
     for (let vacancy of vacanciesIds) {
-      if (dbEntries.map((v) => v.vacancy_id).includes(vacancy.vacancy_id))
+      if (dbEntries.map((v) => v.vacancy_id).includes(vacancy.vacancy_id)) {
         continue;
+      }
       // go to vacancy page detail
       await page.goto(`${BASE_VACANCY_URL}${vacancy.vacancy_id}`);
       // wait for the information panel to load
