@@ -9,12 +9,13 @@ exports.handler = async () => {
     await scraper.init();
     await scraper.goTo(process.env.HOME_URL);
     const jobs = await scraper.scrapeJobs();
-    await scraper.closeBrowser();
     await db.connect();
     await db.saveVacancies(jobs);
-    await db.disconnect();
   } catch (err) {
     console.log("Unknown error", err.message);
+  } finally {
+    await scraper.closeBrowser();
+    await db.disconnect();
   }
 
   /* // connect to db

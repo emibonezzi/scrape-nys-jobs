@@ -7,12 +7,8 @@ class Database {
   }
 
   async connect() {
-    try {
-      await mongoose.connect(this.uri);
-      console.log("Successfully connected to db");
-    } catch (err) {
-      console.log("Error in connecting to db", err.message);
-    }
+    await mongoose.connect(this.uri);
+    console.log("Successfully connected to db");
   }
 
   async getAllVacancies() {
@@ -30,18 +26,14 @@ class Database {
       },
     }));
 
-    try {
-      const savedJobs = await Vacancy.bulkWrite(bulkOps);
-      const inserted = savedJobs.upsertedCount || 0;
-      const updated = savedJobs.modifiedCount || 0;
-      if (inserted === 0 && updated === 0) {
-        console.log("No new or updated vacancies.");
-      } else {
-        console.log(`Inserted: ${inserted} new vacancies.`);
-        console.log(`Updated: ${updated} existing vacancies.`);
-      }
-    } catch (err) {
-      console.log("Error in saving vacancies", err.message);
+    const savedJobs = await Vacancy.bulkWrite(bulkOps);
+    const inserted = savedJobs.upsertedCount || 0;
+    const updated = savedJobs.modifiedCount || 0;
+    if (inserted === 0 && updated === 0) {
+      console.log("No new or updated vacancies.");
+    } else {
+      console.log(`Inserted: ${inserted} new vacancies.`);
+      console.log(`Updated: ${updated} existing vacancies.`);
     }
   }
 
