@@ -1,4 +1,3 @@
-require("dotenv").config();
 const Scraper = require("./scraper");
 const Database = require("./db");
 const config = require("./config");
