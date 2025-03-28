@@ -2,7 +2,8 @@ const puppeteer = require("puppeteer-core");
 const chromium = require("@sparticuz/chromium");
 
 class Scraper {
-  constructor() {
+  constructor(homeUrl) {
+    this.homeUrl = homeUrl;
     this.browser = null;
     this.page = null;
   }
@@ -18,8 +19,8 @@ class Scraper {
     console.log("Browser initialized");
   }
 
-  async goTo(url) {
-    await this.page.goto(url);
+  async loadPage() {
+    await this.page.goto(this.homeUrl);
   }
 
   async scrapeJobs() {

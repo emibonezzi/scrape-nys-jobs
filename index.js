@@ -1,18 +1,20 @@
 require("dotenv").config();
 const Scraper = require("./scraper");
 const Database = require("./db");
+const config = require("./config");
 
 exports.handler = async () => {
-  const scraper = new Scraper();
-  const db = new Database(process.env.MONGO_URI);
+  const scraper = new Scraper(config.homeUrl);
+  const db = new Database(config.mongoUri);
   try {
     await scraper.init();
-    await scraper.goTo(process.env.HOME_URL);
+    await scraper.loadPage();
     const jobs = await scraper.scrapeJobs();
     await db.connect();
     await db.saveVacancies(jobs);
   } catch (err) {
-    console.log("Unknown error", err.message);
+    console.log("Error", err.stack);
+    throw err;
   } finally {
     await scraper.closeBrowser();
     await db.disconnect();
