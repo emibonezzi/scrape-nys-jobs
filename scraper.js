@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 const chromium = require("@sparticuz/chromium");
 
 class Scraper {
@@ -9,12 +9,12 @@ class Scraper {
   }
 
   async init() {
-    this.browser = await puppeteer.launch({
+    this.browser = await puppeteer.launch(/* {
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath(),
       headless: true,
-    });
+    } */);
     this.page = await this.browser.newPage();
     console.log("Browser initialized");
   }

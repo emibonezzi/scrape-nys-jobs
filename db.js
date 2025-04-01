@@ -11,30 +11,34 @@ class Database {
     console.log("Successfully connected to db");
   }
 
-  async getAllVacancies() {
-    return await Vacancy.find({});
+  async getAllActiveVacancies() {
+    return await Vacancy.find({ active: true });
   }
 
-  async saveVacancies(vacancies) {
-    if (!vacancies || vacancies.length === 0) return;
-
-    const bulkOps = vacancies.map((vacancy) => ({
-      updateOne: {
-        filter: { vacancy_id: vacancy.vacancy_id }, // Match existing doc by ID
-        update: { $set: vacancy }, // Update fields if duplicate exists
-        upsert: true, // Insert if not found
-      },
-    }));
-
-    const savedJobs = await Vacancy.bulkWrite(bulkOps);
-    const inserted = savedJobs.upsertedCount || 0;
-    const updated = savedJobs.modifiedCount || 0;
-    if (inserted === 0 && updated === 0) {
-      console.log("No new or updated vacancies.");
-    } else {
-      console.log(`Inserted: ${inserted} new vacancies.`);
-      console.log(`Updated: ${updated} existing vacancies.`);
+  async deactivateListings(scrapedJobs) {
+    console.log("Deactivating existing listings...");
+    const results = {
+      deactivatedVacancies: 0,
+    };
+    const databaseJobs = await this.getAllActiveVacancies();
+    for (const entry of databaseJobs) {
+      if (
+        !scrapedJobs
+          .map((vacancy) => vacancy.vacancy_id)
+          .includes(entry.vacancy_id)
+      ) {
+        console.log("Deactivating vacancy", entry.vacancy_id);
+        const missingVacancy = await Vacancy.findOneAndUpdate(
+          {
+            vacancy_id: entry.vacancy_id,
+          },
+          { active: false }
+        );
+        results.deactivatedVacancies++;
+      }
     }
+
+    console.log("Deactivated", results.deactivatedVacancies, "vacancies.");
   }
 
   async disconnect() {

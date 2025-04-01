@@ -10,9 +10,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.777.0",
     "@sparticuz/chromium": "^123.0.1",
     "dotenv": "^16.4.7",
     "mongoose": "^8.10.1",
+    "puppeteer": "^24.5.0",
     "puppeteer-core": "^22.6.4",
     "serverless-http": "^3.2.0"
   }
