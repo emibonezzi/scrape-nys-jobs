@@ -93,4 +93,4 @@ exports.handler = async () => {
   console.log("New listing check finished."); */
 };
 
-exports.handler();
+// exports.handler();
