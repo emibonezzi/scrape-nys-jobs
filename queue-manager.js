@@ -17,7 +17,7 @@ class QueueManager {
       // create batch with ids
       const messageBatch = currentBatch.map((vacancy, index) => ({
         Id: `${vacancy.vacancy_id}_${index}`,
-        MessageBody: JSON.stringify(vacancy.vacancy_id),
+        MessageBody: JSON.stringify(vacancy),
       }));
       const command = new sqs.SendMessageBatchCommand({
         QueueUrl: this.sqsUrl,
