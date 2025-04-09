@@ -38,12 +38,8 @@ class Scraper {
         vacancies.map((vacancy) => {
           return {
             vacancy_id: vacancy.querySelectorAll("td")[0].innerText,
-            title: vacancy.querySelectorAll("td")[1].innerText,
-            grade: vacancy.querySelectorAll("td")[2].innerText,
             date_posted: vacancy.querySelectorAll("td")[3].innerText,
             deadline: vacancy.querySelectorAll("td")[4].innerText,
-            department: vacancy.querySelectorAll("td")[5].innerText,
-            county: vacancy.querySelectorAll("td")[6].innerText,
             active: true,
           };
         })
