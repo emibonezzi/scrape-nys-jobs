@@ -27,7 +27,7 @@ class QueueManager {
         const response = await client.send(command);
         results.batchesSent++;
       } catch (err) {
-        console.error("Error in sending batch");
+        console.error("Error in sending batch", err.message);
         continue;
       }
     }
